@@ -8,7 +8,7 @@ namespace UserConnectionService.Data.Entities;
 
 [Table("user_connection_events")]
 [Index(nameof(UserId), nameof(IpAddress))]
-public class UserConnectionEvent
+public class UserConnectionEvent : IEvent
 {
     [Key]
     public long Id { get; set; }

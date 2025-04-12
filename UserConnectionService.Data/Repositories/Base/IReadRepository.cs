@@ -3,9 +3,9 @@
 public interface IReadRepository<T> : IRepository
     where T : class
 {
-    Task<IEnumerable<T>> GetAsync(Func<T, bool> func);
+    IEnumerable<T> GetAsync(Func<T, bool> func);
 
     Task<long> GetCountAsync();
 
-    T? GetFirstOrDefault(Func<T, bool> func);
+    T? GetFirstOrDefaultAsync(Func<T, bool> func);
 }

@@ -1,4 +1,5 @@
-﻿using UserConnectionService.Data.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using UserConnectionService.Data.Entities;
 using UserConnectionService.Data.Repositories.Base;
 
 namespace UserConnectionService.Data.Repositories;

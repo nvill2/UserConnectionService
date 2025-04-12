@@ -6,4 +6,5 @@ namespace UserConnectionService.Data.Repositories;
 // a repository for user connection events registering
 public interface IUserConnectionEventRepository : IReadWriteRepository<UserConnectionEvent>
 {
+    Task<UserConnectionEvent?> GetLatestEventByUserIdAsync(long userId);
 }

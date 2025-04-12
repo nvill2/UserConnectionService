@@ -1,29 +1,30 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using System.Linq.Expressions;
 using UserConnectionService.Data.Base;
+using UserConnectionService.Data.Entities;
 
 namespace UserConnectionService.Data.Repositories.Base;
 
-public class BaseEntityRepository<T>(UserMonitoringContext userMonitoringContext) : IReadWriteRepository<T>
-where T : class
+public abstract class BaseEntityRepository<T>(UserMonitoringContext userMonitoringContext) : IReadWriteRepository<T>
+where T : class, IEvent
 {
-    private readonly UserMonitoringContext _userMonitoringContext = userMonitoringContext;
+    protected readonly UserMonitoringContext UserMonitoringContext = userMonitoringContext;
 
-    public async Task AddAsync(T item) => await _userMonitoringContext
+    public async Task AddAsync(T item) => await UserMonitoringContext
         .Set<T>()
         .AddAsync(item);
 
-    public async Task AddRangeAsync(IEnumerable<T> items) => await _userMonitoringContext
+    public async Task AddRangeAsync(IEnumerable<T> items) => await UserMonitoringContext
         .Set<T>()
         .AddRangeAsync(items);
 
-    public async Task<IEnumerable<T>> GetAsync(Func<T, bool> func) => await _userMonitoringContext
+    public IEnumerable<T> GetAsync(Func<T, bool> func) => UserMonitoringContext
         .Set<T>()
-        .AsNoTracking()
         .Where(func)
-        .AsQueryable()
-        .ToArrayAsync();
+        .ToArray();
 
-    public Task<long> GetCountAsync() => _userMonitoringContext
+    public Task<long> GetCountAsync() => UserMonitoringContext
         .Set<T>()
         .AsNoTracking()
         .LongCountAsync();
@@ -31,9 +32,9 @@ where T : class
     /// <summary>
     /// this one is trackable as we are going to amend its property
     /// </summary>
-    public T? GetFirstOrDefault(Func<T, bool> func) => _userMonitoringContext
+    public T? GetFirstOrDefaultAsync(Func<T, bool> func) => UserMonitoringContext
         .Set<T>()
         .FirstOrDefault(func);
 
-    public Task<int> SaveAsync() => _userMonitoringContext.SaveChangesAsync();
+    public Task<int> SaveAsync() => UserMonitoringContext.SaveChangesAsync();
 }

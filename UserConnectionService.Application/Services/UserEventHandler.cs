@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Linq.Expressions;
 using UserConnectionService.Application;
 using UserConnectionService.Application.Interfaces;
 using UserConnectionService.Application.Requests;
@@ -33,25 +34,35 @@ public class UserEventHandler : IUserEventHandler
 
     public async Task<IpAddressListResponse> GetUserIpAddressesAsync(long userId)
     {
-        var eventList = await _userConnectionEventRepository.GetAsync(e => e.UserId == userId);
+        var eventList = _userConnectionEventRepository.GetAsync(e => e.UserId == userId);
 
         if (!eventList?.Any() ?? false)
         {
-            return new();
+            return new()
+            {
+                ResultMessage = string.Format(Constants.NoEventsForUserIdFormat, userId)
+            };
         }
 
         return new()
         {
             IsSuccess = true,
-            IpAddressList = eventList!.Select(e => e.IpAddress)
+            IpAddressList = eventList!.Select(e => e.IpAddress),
+            ResultMessage = Constants.SuccessResultMessage
         };
     }
 
-    //TODO add search to repository
     public async Task<UserEventResponse> GetUserLastConectionInfoAsync(long userId)
     {
-        var events = await _userConnectionEventRepository.GetAsync(u => u.UserId == userId);
-        var latestEvent = events.OrderByDescending(e => e.TimeStamp).FirstOrDefault();
+        var latestEvent = await _userConnectionEventRepository.GetLatestEventByUserIdAsync(userId);
+
+        if (latestEvent == null)
+        {
+            return new()
+            {
+                ResultMessage = string.Format(Constants.NoEventsForUserIdFormat, userId)
+            };
+        }
 
         return new()
         {
@@ -61,7 +72,8 @@ public class UserEventHandler : IUserEventHandler
                 UserId = userId,
                 IpAddress = latestEvent!.IpAddress,
                 Timestamp = latestEvent!.TimeStamp
-            }
+            },
+            ResultMessage = Constants.SuccessResultMessage
         };
     }
 
@@ -69,20 +81,27 @@ public class UserEventHandler : IUserEventHandler
     {
         if (string.IsNullOrWhiteSpace(ipAddressSubstring))
         {
-            return new();
+            return new()
+            {
+                ResultMessage = Constants.EmptyOrNulRequest
+            };
         }
 
-        var events = await _userConnectionEventRepository.GetAsync(e => e.IpAddress.StartsWith(ipAddressSubstring));
+        var events = _userConnectionEventRepository.GetAsync(e => e.IpAddress.StartsWith(ipAddressSubstring));
 
         if (!events?.Any() ?? false)
         {
-            return new();
+            return new()
+            {
+                ResultMessage = string.Format(Constants.NotIpAddressesFormat, ipAddressSubstring)
+            };
         }
 
         return new()
         {
             IsSuccess = true,
-            UserIds = events!.Select(e => e.UserId).Distinct()
+            UserIds = events!.Select(e => e.UserId).Distinct(),
+            ResultMessage = Constants.SuccessResultMessage
         };
     }
 
@@ -136,6 +155,8 @@ public class UserEventHandler : IUserEventHandler
                 Data = JsonConvert.SerializeObject(request)
             });
 
+            await _errorEventRepository.SaveAsync();
+
             _logger.LogError(ex, ex.Message);
 
             return new()
@@ -152,6 +173,7 @@ public class UserEventHandler : IUserEventHandler
 
     private UserConnectionEvent? GetExistentEvent(long userId, string ipAddress)
     {
-        return _userConnectionEventRepository.GetFirstOrDefault(u => u.UserId == userId && u.IpAddress.Equals(ipAddress, StringComparison.OrdinalIgnoreCase));
+        return _userConnectionEventRepository
+            .GetFirstOrDefaultAsync(u => u.UserId == userId && u.IpAddress.Equals(ipAddress, StringComparison.OrdinalIgnoreCase));
     }
 }
