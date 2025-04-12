@@ -5,7 +5,7 @@ namespace UserConnectionService.Application.Interfaces;
 
 public interface IUserEventHandler
 {
-    Task<UserEventProcessResponse> ProcessEvent(UserEventRequest? request);
+    Task<UserEventProcessResponse> ProcessEventAsync(UserEventRequest? request);
 
     Task<UserListResponse> GetUsersByIpStartsWith(string ipAddressSubstring);
 

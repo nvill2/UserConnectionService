@@ -31,11 +31,9 @@ where T : class
     /// <summary>
     /// this one is trackable as we are going to amend its property
     /// </summary>
-    public Task<T?> GetFirstOrDefaultAsync(Func<T, bool> func) => _userMonitoringContext
+    public T? GetFirstOrDefault(Func<T, bool> func) => _userMonitoringContext
         .Set<T>()
-        .Where(func)
-        .AsQueryable()
-        .FirstOrDefaultAsync();
+        .FirstOrDefault(func);
 
     public Task<int> SaveAsync() => _userMonitoringContext.SaveChangesAsync();
 }

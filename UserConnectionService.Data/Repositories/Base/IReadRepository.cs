@@ -7,5 +7,5 @@ public interface IReadRepository<T> : IRepository
 
     Task<long> GetCountAsync();
 
-    Task<T?> GetFirstOrDefaultAsync(Func<T, bool> func);
+    T? GetFirstOrDefault(Func<T, bool> func);
 }

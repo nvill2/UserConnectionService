@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UserConnectionService.Application.Interfaces;
+using UserConnectionService.Application.Requests;
 
 namespace UserConnectionService.Api.Controllers;
 [Route("api/[controller]")]
@@ -29,7 +30,17 @@ public class ConnectionsController : ControllerBase
 
     // POST api/<ConnectionsController>
     [HttpPost]
-    public void Post([FromBody] string value)
+    public async Task<IActionResult> Post([FromBody] UserEventRequest request)
     {
+        try
+        {
+            var processResult = await _userEventHandler.ProcessEventAsync(request);
+
+            return Ok(processResult);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.ToString());
+        }
     }
 }

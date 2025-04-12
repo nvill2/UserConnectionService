@@ -18,7 +18,7 @@ public class UserEventHandler : IUserEventHandler
     private readonly IErrorEventRepository _errorEventRepository;
     private readonly IUserConnectionEventRepository _userConnectionEventRepository;
 
-    UserEventHandler(
+    public UserEventHandler(
         ILogger<UserEventHandler> logger,
         IIpAddressValidator ipAddressValidator,
         IErrorEventRepository errorEventRepository,
@@ -45,7 +45,7 @@ public class UserEventHandler : IUserEventHandler
         throw new NotImplementedException();
     }
 
-    public async Task<UserEventProcessResponse> ProcessEvent(UserEventRequest? request)
+    public async Task<UserEventProcessResponse> ProcessEventAsync(UserEventRequest? request)
     {
         var result = new UserEventProcessResponse();
 
@@ -61,7 +61,7 @@ public class UserEventHandler : IUserEventHandler
                 throw new IpAddressParseException(request.IpAddress);
             }
 
-            var existentEvent = await GetExistentEvent(request.UserId, request.IpAddress!);
+            var existentEvent = GetExistentEvent(request.UserId, request.IpAddress!);
 
             if (existentEvent == null)
             {
@@ -107,13 +107,8 @@ public class UserEventHandler : IUserEventHandler
         }
     }
 
-    private async Task<UserConnectionEvent?> GetExistentEvent(long userId, string ipAddress)
+    private UserConnectionEvent? GetExistentEvent(long userId, string ipAddress)
     {
-        return await _userConnectionEventRepository.GetFirstOrDefaultAsync(u => u.UserId == userId && u.IpAddress.Equals(ipAddress, StringComparison.OrdinalIgnoreCase));
-    }
-
-    Task<UserEventProcessResponse> IUserEventHandler.ProcessEvent(UserEventRequest? request)
-    {
-        throw new NotImplementedException();
+        return _userConnectionEventRepository.GetFirstOrDefault(u => u.UserId == userId && u.IpAddress.Equals(ipAddress, StringComparison.OrdinalIgnoreCase));
     }
 }
