@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserConnectionService.Data"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserConnectionService.Domain", "UserConnectionService.Domain\UserConnectionService.Domain.csproj", "{602874D4-EAE2-4FDD-BE5A-5ABBC24DBD95}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserConnectionService.Application", "UserConnectionService.Application\UserConnectionService.Application.csproj", "{7F91F323-9C9E-4336-94B1-FBBE6BF7A590}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserConnectionService.Application", "UserConnectionService.Application\UserConnectionService.Application.csproj", "{7F91F323-9C9E-4336-94B1-FBBE6BF7A590}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserConnectionService.Tests", "UserConnectionService.Tests\UserConnectionService.Tests.csproj", "{055FA10E-6184-486C-B721-BD7573087BEF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{7F91F323-9C9E-4336-94B1-FBBE6BF7A590}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F91F323-9C9E-4336-94B1-FBBE6BF7A590}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F91F323-9C9E-4336-94B1-FBBE6BF7A590}.Release|Any CPU.Build.0 = Release|Any CPU
+		{055FA10E-6184-486C-B721-BD7573087BEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{055FA10E-6184-486C-B721-BD7573087BEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{055FA10E-6184-486C-B721-BD7573087BEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{055FA10E-6184-486C-B721-BD7573087BEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

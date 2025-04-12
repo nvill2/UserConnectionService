@@ -6,4 +6,6 @@ public interface IReadRepository<T> : IRepository
     Task<IEnumerable<T>> GetAsync(Func<T, bool> func);
 
     Task<long> GetCountAsync();
+
+    Task<T?> GetFirstOrDefaultAsync(Func<T, bool> func);
 }

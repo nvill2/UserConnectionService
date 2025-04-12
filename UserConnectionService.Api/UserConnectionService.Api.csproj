@@ -6,4 +6,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\UserConnectionService.Application\UserConnectionService.Application.csproj" />
+    <ProjectReference Include="..\UserConnectionService.Data\UserConnectionService.Data.csproj" />
+    <ProjectReference Include="..\UserConnectionService.Domain\UserConnectionService.Domain.csproj" />
+    <ProjectReference Include="..\UserConnectionService.Infrastructure\UserConnectionService.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

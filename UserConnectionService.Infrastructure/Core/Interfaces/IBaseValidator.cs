@@ -1,7 +1,6 @@
 ﻿namespace UserConnectionService.Infrastructure.Core.Interfaces;
 
-public interface IValidator<T>
+public interface IBaseValidator<T>
 {
-    bool Validate(T value);
-
+    bool Validate(T? value);
 }

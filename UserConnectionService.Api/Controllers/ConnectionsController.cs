@@ -1,12 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using UserConnectionService.Application.Interfaces;
 
 namespace UserConnectionService.Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class ConnectionsController : ControllerBase
 {
+    private readonly IUserEventHandler _userEventHandler;
+
+    public ConnectionsController(IUserEventHandler userEventHandler)
+    {
+        _userEventHandler = userEventHandler;
+    }
+
     // GET: api/<ConnectionsController>
     [HttpGet]
     public IEnumerable<string> Get()
@@ -24,18 +30,6 @@ public class ConnectionsController : ControllerBase
     // POST api/<ConnectionsController>
     [HttpPost]
     public void Post([FromBody] string value)
-    {
-    }
-
-    // PUT api/<ConnectionsController>/5
-    [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
-    {
-    }
-
-    // DELETE api/<ConnectionsController>/5
-    [HttpDelete("{id}")]
-    public void Delete(int id)
     {
     }
 }

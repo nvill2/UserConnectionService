@@ -3,7 +3,8 @@ using UserConnectionService.Data.Repositories.Base;
 
 namespace UserConnectionService.Data.Repositories;
 
-public class ErrorEventRepository : BaseEntityRepository<ErrorEvent>
+// implementation
+public class ErrorEventRepository : BaseEntityRepository<ErrorEvent>, IErrorEventRepository
 {
     public ErrorEventRepository(UserMonitoringContext userMonitoringContext) : base(userMonitoringContext)
     {

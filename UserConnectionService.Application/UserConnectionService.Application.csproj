@@ -7,8 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Responses\" />
-    <Folder Include="Requests\" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UserConnectionService.Data\UserConnectionService.Data.csproj" />
+    <ProjectReference Include="..\UserConnectionService.Domain\UserConnectionService.Domain.csproj" />
+    <ProjectReference Include="..\UserConnectionService.Infrastructure\UserConnectionService.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

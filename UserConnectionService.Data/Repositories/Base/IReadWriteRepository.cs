@@ -1,6 +1,4 @@
-﻿using UserConnectionService.Data.Entities;
-
-namespace UserConnectionService.Data.Base;
+﻿namespace UserConnectionService.Data.Base;
 
 public interface IReadWriteRepository<T> : IReadRepository<T> 
     where T : class

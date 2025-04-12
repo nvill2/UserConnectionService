@@ -7,9 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Core\NewFolder\**" />
-    <EmbeddedResource Remove="Core\NewFolder\**" />
-    <None Remove="Core\NewFolder\**" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
   </ItemGroup>
 
 </Project>

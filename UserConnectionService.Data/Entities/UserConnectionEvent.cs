@@ -1,23 +1,31 @@
 ﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using UserConnectionService.Data.Entities.Base;
+using System.Reflection;
 
 namespace UserConnectionService.Data.Entities;
 
 [Table("user_connection_events")]
-public class UserConnectionEvent : BaseEntity
+[Index(nameof(UserId), nameof(IpAddress))]
+public class UserConnectionEvent
 {
+    [Key]
     public long Id { get; set; }
 
-    public long User { get; set; }
+    public long UserId { get; set; }
 
     public string IpAddress { get; set; }
+
+    public long VisitCount { get; set; }
+
+    public DateTimeOffset TimeStamp { get; set; } = DateTimeOffset.UtcNow;
 }
 
 public class UserConnectionEventValidator : AbstractValidator<UserConnectionEvent>
 {
     public UserConnectionEventValidator()
     {
-        RuleFor(x => x.IpAddress).NotEmpty().Length(0, 39);
+        RuleFor(x => x.IpAddress).NotEmpty().Length(0, 39); // yes we have IpAddressValidator but let it be as well
     }
 }
