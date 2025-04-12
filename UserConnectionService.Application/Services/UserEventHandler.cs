@@ -6,6 +6,7 @@ using UserConnectionService.Application.Requests;
 using UserConnectionService.Application.Responses;
 using UserConnectionService.Data.Entities;
 using UserConnectionService.Data.Repositories;
+using UserConnectionService.Domain.Models;
 using UserConnectionService.Infrastructure.Core.Interfaces;
 using UserConnectionService.Infrastructure.Exceptions;
 
@@ -30,22 +31,62 @@ public class UserEventHandler : IUserEventHandler
         _userConnectionEventRepository = userConnectionEventRepository;
     }
 
-    public Task<IpAddressListResponse> GetUserIpAddresses(long userId)
+    public async Task<IpAddressListResponse> GetUserIpAddressesAsync(long userId)
     {
-        throw new NotImplementedException();
+        var eventList = await _userConnectionEventRepository.GetAsync(e => e.UserId == userId);
+
+        if (!eventList?.Any() ?? false)
+        {
+            return new();
+        }
+
+        return new()
+        {
+            IsSuccess = true,
+            IpAddressList = eventList!.Select(e => e.IpAddress)
+        };
     }
 
-    public Task<UserEventResponse> GetUserLastConectionInfo(long userId)
+    //TODO add search to repository
+    public async Task<UserEventResponse> GetUserLastConectionInfoAsync(long userId)
     {
-        throw new NotImplementedException();
+        var events = await _userConnectionEventRepository.GetAsync(u => u.UserId == userId);
+        var latestEvent = events.OrderByDescending(e => e.TimeStamp).FirstOrDefault();
+
+        return new()
+        {
+            IsSuccess = true,
+            UserEvent = new UserEvent
+            {
+                UserId = userId,
+                IpAddress = latestEvent!.IpAddress,
+                Timestamp = latestEvent!.TimeStamp
+            }
+        };
     }
 
-    public Task<UserListResponse> GetUsersByIpStartsWith(string ipAddressSubstring)
+    public async Task<UserListResponse> GetUsersByIpStartsWithAsync(string ipAddressSubstring)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrWhiteSpace(ipAddressSubstring))
+        {
+            return new();
+        }
+
+        var events = await _userConnectionEventRepository.GetAsync(e => e.IpAddress.StartsWith(ipAddressSubstring));
+
+        if (!events?.Any() ?? false)
+        {
+            return new();
+        }
+
+        return new()
+        {
+            IsSuccess = true,
+            UserIds = events!.Select(e => e.UserId).Distinct()
+        };
     }
 
-    public async Task<UserEventProcessResponse> ProcessEventAsync(UserEventRequest? request)
+    public async Task<UserEventProcessResponse> ProcessNewEventAsync(UserEventRequest? request)
     {
         var result = new UserEventProcessResponse();
 
@@ -69,12 +110,14 @@ public class UserEventHandler : IUserEventHandler
                 {
                     IpAddress = request.IpAddress!,
                     UserId = request.UserId,
-                    VisitCount = 1
+                    VisitCount = 1,
+                    TimeStamp = DateTimeOffset.UtcNow
                 });
             }
             else
             {
                 existentEvent.VisitCount++;
+                existentEvent.TimeStamp = DateTimeOffset.UtcNow;
             }
 
             await _userConnectionEventRepository.SaveAsync();
@@ -97,7 +140,7 @@ public class UserEventHandler : IUserEventHandler
 
             return new()
             {
-                ResultMessage = Constants.FailedResultMessage
+                ResultMessage = ex.Message
             }; ;
         }
         catch (Exception ex)

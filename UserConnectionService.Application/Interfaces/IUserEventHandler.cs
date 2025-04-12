@@ -5,11 +5,11 @@ namespace UserConnectionService.Application.Interfaces;
 
 public interface IUserEventHandler
 {
-    Task<UserEventProcessResponse> ProcessEventAsync(UserEventRequest? request);
+    Task<UserEventProcessResponse> ProcessNewEventAsync(UserEventRequest? request);
 
-    Task<UserListResponse> GetUsersByIpStartsWith(string ipAddressSubstring);
+    Task<UserListResponse> GetUsersByIpStartsWithAsync(string ipAddressSubstring);
 
-    Task<IpAddressListResponse> GetUserIpAddresses(long userId);
+    Task<IpAddressListResponse> GetUserIpAddressesAsync(long userId);
 
-    Task<UserEventResponse> GetUserLastConectionInfo(long userId);
+    Task<UserEventResponse> GetUserLastConectionInfoAsync(long userId);
 }

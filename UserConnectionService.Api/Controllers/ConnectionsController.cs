@@ -34,7 +34,7 @@ public class ConnectionsController : ControllerBase
     {
         try
         {
-            var processResult = await _userEventHandler.ProcessEventAsync(request);
+            var processResult = await _userEventHandler.ProcessNewEventAsync(request);
 
             return Ok(processResult);
         }
