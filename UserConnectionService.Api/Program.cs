@@ -19,12 +19,12 @@ builder.Services.AddScoped<IUserConnectionEventRepository, UserConnectionEventRe
 builder.Services.AddScoped<IErrorEventRepository, ErrorEventRepository>();
 builder.Services.AddScoped<IIpAddressValidator, IpAddressValidator>();
 
-builder.Services.AddScoped<IUserEventHandler, UserEventHandler>();
+builder.Services.AddScoped<IUserRequestHandler, UserRequestHandler>();
 
 builder.Services.AddNpgsql<UserMonitoringContext>(postgresConnectionString);
 
 builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
-builder.Services.AddHostedService<QueuedProcessorBackgroundService>();
+builder.Services.AddHostedService<RequestQueueBackgroundService>();
 
 builder.Services.AddLogging();
 builder.Logging.AddConsole();

@@ -4,7 +4,7 @@ using UserConnectionService.Application.Responses;
 namespace UserConnectionService.Application.Interfaces;
 
 // a service handles our operations
-public interface IUserEventHandler
+public interface IUserRequestHandler
 {
     Task<UserEventProcessResponse> ProcessNewEventAsync(UserEventRequest? request);
 

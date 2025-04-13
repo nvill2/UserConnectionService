@@ -1,7 +1,5 @@
 ﻿using System.Net;
-using UserConnectionService.Infrastructure.Core;
 using UserConnectionService.Infrastructure.Core.Interfaces;
-using UserConnectionService.Infrastructure.Exceptions;
 
 namespace UserConnectionService.Infrastructure.Validators;
 

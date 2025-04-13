@@ -9,12 +9,12 @@ namespace UserConnectionService.Api.Controllers;
 [ApiController]
 public class ConnectionsController : ControllerBase
 {
-    private readonly IUserEventHandler _userEventHandler;
+    private readonly IUserRequestHandler _userEventHandler;
     private readonly ILogger<ConnectionsController> _logger;
     private readonly IBackgroundTaskQueue _backgroundTaskQueue;
 
     public ConnectionsController(
-        IUserEventHandler userEventHandler,
+        IUserRequestHandler userEventHandler,
         ILogger<ConnectionsController> logger,
         IBackgroundTaskQueue backgroundTaskQueue)
     {
@@ -24,7 +24,7 @@ public class ConnectionsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] UserEventRequest request)
+    public IActionResult Post([FromBody] UserEventRequest request)
     {
         _backgroundTaskQueue.QueueBackgroundWorkItem(async (token) =>
         {

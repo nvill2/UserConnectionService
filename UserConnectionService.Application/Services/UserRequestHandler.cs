@@ -13,16 +13,16 @@ using UserConnectionService.Infrastructure.Exceptions;
 
 namespace UserConnectionService.Infrastructure.Services;
 
-public class UserEventHandler : IUserEventHandler
+public class UserRequestHandler : IUserRequestHandler
 {
-    private readonly ILogger<UserEventHandler> _logger;
+    private readonly ILogger<UserRequestHandler> _logger;
     private readonly IIpAddressValidator _ipAddressValidator;
     private readonly IErrorEventRepository _errorEventRepository;
     private readonly IUserConnectionEventRepository _userConnectionEventRepository;
     private readonly IBackgroundTaskQueue _backgroundTaskQueue;
 
-    public UserEventHandler(
-        ILogger<UserEventHandler> logger,
+    public UserRequestHandler(
+        ILogger<UserRequestHandler> logger,
         IIpAddressValidator ipAddressValidator,
         IErrorEventRepository errorEventRepository,
         IUserConnectionEventRepository userConnectionEventRepository,
@@ -38,9 +38,9 @@ public class UserEventHandler : IUserEventHandler
 
     public async Task<IpAddressListResponse> GetUserIpAddressesAsync(long userId)
     {
-        var eventList = _userConnectionEventRepository.Get(e => e.UserId == userId);
+        var ipAddresses = await _userConnectionEventRepository.GetIpAddressesByUserId(userId);
 
-        if (!eventList?.Any() ?? false)
+        if (!ipAddresses?.Any() ?? false)
         {
             return new()
             {
@@ -51,7 +51,7 @@ public class UserEventHandler : IUserEventHandler
         return new()
         {
             IsSuccess = true,
-            IpAddressList = eventList!.Select(e => e.IpAddress),
+            IpAddressList = ipAddresses,
             ResultMessage = Constants.SuccessResultMessage
         };
     }
@@ -91,9 +91,9 @@ public class UserEventHandler : IUserEventHandler
             };
         }
 
-        var events = _userConnectionEventRepository.Get(e => e.IpAddress.StartsWith(ipAddressSubstring));
+        var userIds = await _userConnectionEventRepository.GetUsersWithIpStartsWith(ipAddressSubstring);
 
-        if (!events?.Any() ?? false)
+        if (!userIds?.Any() ?? false)
         {
             return new()
             {
@@ -104,7 +104,7 @@ public class UserEventHandler : IUserEventHandler
         return new()
         {
             IsSuccess = true,
-            UserIds = events!.Select(e => e.UserId).Distinct(),
+            UserIds = userIds,
             ResultMessage = Constants.SuccessResultMessage
         };
     }

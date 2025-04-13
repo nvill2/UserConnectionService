@@ -1,13 +1,8 @@
-
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
-using System.Net;
 using System.Net.Http.Json;
-using System.Text.Json.Serialization.Metadata;
-using UserConnectionService.Application.Interfaces;
-using UserConnectionService.Application.Services;
 using UserConnectionService.Data;
 using UserConnectionService.Data.Entities;
 using UserConnectionService.Infrastructure.Core.Interfaces;
@@ -93,11 +88,6 @@ public class UnitTests : IClassFixture<WebApplicationFactory<Program>>
         {
             var response = await _httpClient.PostAsync("/api/connections", JsonContent.Create(userConnectionEvent));
             Assert.True(response.IsSuccessStatusCode);
-
-            if (i % 100 == 0)
-            {
-                Debug.WriteLine($"Processed: {i}.");
-            }
         }
 
         stopwatch.Stop();

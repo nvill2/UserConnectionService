@@ -4,18 +4,19 @@ using UserConnectionService.Infrastructure.Services;
 
 namespace UserConnectionService.Application.Services;
 
-public class QueuedProcessorBackgroundService : BackgroundService
+// this will handle our operations on background
+public class RequestQueueBackgroundService : BackgroundService
 {
     private readonly IBackgroundTaskQueue _taskQueue;
     private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<QueuedProcessorBackgroundService> _logger;
+    private readonly ILogger<RequestQueueBackgroundService> _logger;
 
     public int TaskQueueSize => _taskQueue.QueueSize;
 
-    public QueuedProcessorBackgroundService(
+    public RequestQueueBackgroundService(
         IBackgroundTaskQueue taskQueue,
         IServiceProvider serviceProvider,
-        ILogger<QueuedProcessorBackgroundService> logger)
+        ILogger<RequestQueueBackgroundService> logger)
     {
         _taskQueue = taskQueue;
         _serviceProvider = serviceProvider;

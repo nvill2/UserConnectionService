@@ -11,6 +11,16 @@ public class UserConnectionEventRepository : BaseEntityRepository<UserConnection
     {
     }
 
+    public async Task<IEnumerable<string>> GetIpAddressesByUserId(long userId)
+    {
+        return await UserMonitoringContext
+            .Set<UserConnectionEvent>()
+            .Where(e => e.UserId == userId)
+            .Distinct()
+            .Select(u => u.IpAddress)            
+            .ToArrayAsync();
+    }
+
     public async Task<UserConnectionEvent?> GetLatestEventByUserIdAsync(long userId)
     {
         return await UserMonitoringContext
@@ -18,5 +28,15 @@ public class UserConnectionEventRepository : BaseEntityRepository<UserConnection
             .Where(e => e.UserId == userId)
             .OrderByDescending(e => e.TimeStamp)
             .FirstOrDefaultAsync();
+    }
+
+    public async Task<IEnumerable<long>> GetUsersWithIpStartsWith(string ipSubstring)
+    {
+        return await UserMonitoringContext
+            .Set<UserConnectionEvent>()
+            .Where(e => e.IpAddress.StartsWith(ipSubstring))
+            .Distinct()
+            .Select(u => u.UserId)
+            .ToArrayAsync();
     }
 }
