@@ -10,6 +10,8 @@ public class QueuedProcessorBackgroundService : BackgroundService
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<QueuedProcessorBackgroundService> _logger;
 
+    public int TaskQueueSize => _taskQueue.QueueSize;
+
     public QueuedProcessorBackgroundService(
         IBackgroundTaskQueue taskQueue,
         IServiceProvider serviceProvider,
@@ -38,7 +40,7 @@ public class QueuedProcessorBackgroundService : BackgroundService
             }
             finally
             {
-                await Task.Delay(100);
+                await Task.Delay(100); // just to decrease CPU load
             }
         }
 

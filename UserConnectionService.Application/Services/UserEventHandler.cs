@@ -156,7 +156,8 @@ public class UserEventHandler : IUserEventHandler
             await _errorEventRepository.AddAsync(new ErrorEvent
             {
                 ErrorMessage = ex.Message,
-                Data = JsonConvert.SerializeObject(request)
+                Data = JsonConvert.SerializeObject(request),
+                TimeStamp = DateTimeOffset.UtcNow
             });
 
             await _errorEventRepository.SaveAsync();

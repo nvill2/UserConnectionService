@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using UserConnectionService.Application.Interfaces;
 using UserConnectionService.Application.Services;
@@ -56,3 +55,7 @@ var context = scope.ServiceProvider.GetRequiredService<UserMonitoringContext>();
 context.Database.EnsureCreated();
 
 app.Run();
+
+public partial class Program
+{
+}
