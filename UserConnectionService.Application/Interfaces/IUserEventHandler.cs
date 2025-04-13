@@ -3,6 +3,7 @@ using UserConnectionService.Application.Responses;
 
 namespace UserConnectionService.Application.Interfaces;
 
+// a service handles our operations
 public interface IUserEventHandler
 {
     Task<UserEventProcessResponse> ProcessNewEventAsync(UserEventRequest? request);

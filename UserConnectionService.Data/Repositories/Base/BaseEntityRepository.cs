@@ -1,15 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using System.Linq.Expressions;
+using Microsoft.Extensions.DependencyInjection;
 using UserConnectionService.Data.Base;
 using UserConnectionService.Data.Entities;
 
 namespace UserConnectionService.Data.Repositories.Base;
 
-public abstract class BaseEntityRepository<T>(UserMonitoringContext userMonitoringContext) : IReadWriteRepository<T>
+public abstract class BaseEntityRepository<T> : IReadWriteRepository<T>
 where T : class, IEvent
 {
-    protected readonly UserMonitoringContext UserMonitoringContext = userMonitoringContext;
+    protected readonly UserMonitoringContext UserMonitoringContext;
+
+    public BaseEntityRepository(IServiceProvider serviceProvider)
+    {
+        var scope = serviceProvider.CreateScope();
+        UserMonitoringContext = scope.ServiceProvider.GetRequiredService<UserMonitoringContext>();
+    }
 
     public async Task AddAsync(T item) => await UserMonitoringContext
         .Set<T>()
@@ -19,7 +24,7 @@ where T : class, IEvent
         .Set<T>()
         .AddRangeAsync(items);
 
-    public IEnumerable<T> GetAsync(Func<T, bool> func) => UserMonitoringContext
+    public IEnumerable<T> Get(Func<T, bool> func) => UserMonitoringContext
         .Set<T>()
         .Where(func)
         .ToArray();
@@ -32,7 +37,7 @@ where T : class, IEvent
     /// <summary>
     /// this one is trackable as we are going to amend its property
     /// </summary>
-    public T? GetFirstOrDefaultAsync(Func<T, bool> func) => UserMonitoringContext
+    public T? GetFirstOrDefault(Func<T, bool> func) => UserMonitoringContext
         .Set<T>()
         .FirstOrDefault(func);
 

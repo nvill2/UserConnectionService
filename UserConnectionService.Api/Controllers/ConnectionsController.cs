@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using UserConnectionService.Application;
 using UserConnectionService.Application.Interfaces;
 using UserConnectionService.Application.Requests;
+using UserConnectionService.Infrastructure.Services;
 
 namespace UserConnectionService.Api.Controllers;
 [Route("api/[controller]")]
@@ -9,35 +11,43 @@ public class ConnectionsController : ControllerBase
 {
     private readonly IUserEventHandler _userEventHandler;
     private readonly ILogger<ConnectionsController> _logger;
+    private readonly IBackgroundTaskQueue _backgroundTaskQueue;
 
     public ConnectionsController(
         IUserEventHandler userEventHandler,
-        ILogger<ConnectionsController> logger)
+        ILogger<ConnectionsController> logger,
+        IBackgroundTaskQueue backgroundTaskQueue)
     {
         _userEventHandler = userEventHandler;
         _logger = logger;
+        _backgroundTaskQueue = backgroundTaskQueue;
     }
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] UserEventRequest request)
     {
-        try
+        _backgroundTaskQueue.QueueBackgroundWorkItem(async (token) =>
         {
-            var processResult = await _userEventHandler.ProcessNewEventAsync(request);
-
-            if (processResult.IsSuccess)
+            try
             {
-                return Ok(processResult);
+                var processResult = await _userEventHandler.ProcessNewEventAsync(request);
+
+                if (processResult.IsSuccess)
+                {
+                    _logger.LogInformation(processResult.ResultMessage);
+                    return;
+                }
+
+                _logger.LogError(processResult.ResultMessage);
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
+        });
 
-            _logger.LogError(processResult.ResultMessage);
-
-            return BadRequest(processResult.ResultMessage);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ex.ToString());
-        }
+        _logger.LogInformation(Constants.JobEnqueued);
+        return Ok();
     }
 
     [HttpGet]

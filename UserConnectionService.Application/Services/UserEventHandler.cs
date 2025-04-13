@@ -19,22 +19,26 @@ public class UserEventHandler : IUserEventHandler
     private readonly IIpAddressValidator _ipAddressValidator;
     private readonly IErrorEventRepository _errorEventRepository;
     private readonly IUserConnectionEventRepository _userConnectionEventRepository;
+    private readonly IBackgroundTaskQueue _backgroundTaskQueue;
 
     public UserEventHandler(
         ILogger<UserEventHandler> logger,
         IIpAddressValidator ipAddressValidator,
         IErrorEventRepository errorEventRepository,
-        IUserConnectionEventRepository userConnectionEventRepository)
+        IUserConnectionEventRepository userConnectionEventRepository,
+        IBackgroundTaskQueue backgroundTaskQueue
+        )
     {
         _logger = logger;
         _ipAddressValidator = ipAddressValidator;
         _errorEventRepository = errorEventRepository;
         _userConnectionEventRepository = userConnectionEventRepository;
+        _backgroundTaskQueue = backgroundTaskQueue;
     }
 
     public async Task<IpAddressListResponse> GetUserIpAddressesAsync(long userId)
     {
-        var eventList = _userConnectionEventRepository.GetAsync(e => e.UserId == userId);
+        var eventList = _userConnectionEventRepository.Get(e => e.UserId == userId);
 
         if (!eventList?.Any() ?? false)
         {
@@ -87,7 +91,7 @@ public class UserEventHandler : IUserEventHandler
             };
         }
 
-        var events = _userConnectionEventRepository.GetAsync(e => e.IpAddress.StartsWith(ipAddressSubstring));
+        var events = _userConnectionEventRepository.Get(e => e.IpAddress.StartsWith(ipAddressSubstring));
 
         if (!events?.Any() ?? false)
         {
@@ -174,6 +178,6 @@ public class UserEventHandler : IUserEventHandler
     private UserConnectionEvent? GetExistentEvent(long userId, string ipAddress)
     {
         return _userConnectionEventRepository
-            .GetFirstOrDefaultAsync(u => u.UserId == userId && u.IpAddress.Equals(ipAddress, StringComparison.OrdinalIgnoreCase));
+            .GetFirstOrDefault(u => u.UserId == userId && u.IpAddress.Equals(ipAddress, StringComparison.OrdinalIgnoreCase));
     }
 }

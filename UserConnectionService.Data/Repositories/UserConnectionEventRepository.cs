@@ -7,7 +7,7 @@ namespace UserConnectionService.Data.Repositories;
 // implementation
 public class UserConnectionEventRepository : BaseEntityRepository<UserConnectionEvent>, IUserConnectionEventRepository
 {
-    public UserConnectionEventRepository(UserMonitoringContext userMonitoringContext) : base(userMonitoringContext)
+    public UserConnectionEventRepository(IServiceProvider serviceProvider) : base(serviceProvider)
     {
     }
 

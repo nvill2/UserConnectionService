@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using UserConnectionService.Application.Interfaces;
+using UserConnectionService.Application.Services;
 using UserConnectionService.Data;
 using UserConnectionService.Data.Repositories;
 using UserConnectionService.Infrastructure.Core.Interfaces;
@@ -22,7 +23,9 @@ builder.Services.AddScoped<IIpAddressValidator, IpAddressValidator>();
 builder.Services.AddScoped<IUserEventHandler, UserEventHandler>();
 
 builder.Services.AddNpgsql<UserMonitoringContext>(postgresConnectionString);
-builder.Services.AddEntityFrameworkNpgsql();
+
+builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+builder.Services.AddHostedService<QueuedProcessorBackgroundService>();
 
 builder.Services.AddLogging();
 builder.Logging.AddConsole();
@@ -49,7 +52,7 @@ app.MapControllers();
 var scope = app.Services.CreateScope();
 var context = scope.ServiceProvider.GetRequiredService<UserMonitoringContext>();
 
-context.Database.EnsureDeleted();
+//context.Database.EnsureDeleted();
 context.Database.EnsureCreated();
 
 app.Run();
